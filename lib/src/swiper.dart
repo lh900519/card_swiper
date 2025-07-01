@@ -574,6 +574,8 @@ class _SwiperState extends _SwiperTimerMixin {
         onIndexChanged: _onIndexChanged,
         controller: _controller,
         scrollDirection: widget.scrollDirection,
+        axisDirection: widget.axisDirection,
+        physics: widget.physics,
       );
     } else {
       return const SizedBox.shrink();
@@ -703,6 +705,7 @@ abstract class _SubSwiper extends StatefulWidget {
     this.scrollDirection = Axis.horizontal,
     this.axisDirection = AxisDirection.left,
     this.onIndexChanged,
+    this.physics,
   }) : super(key: key);
 
   final IndexedWidgetBuilder? itemBuilder;
@@ -717,6 +720,7 @@ abstract class _SubSwiper extends StatefulWidget {
   final bool loop;
   final Axis? scrollDirection;
   final AxisDirection? axisDirection;
+  final ScrollPhysics? physics;
 
   @override
   State<StatefulWidget> createState();

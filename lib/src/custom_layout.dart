@@ -111,11 +111,20 @@ abstract class _CustomLayoutStateBase<T extends _SubSwiper> extends State<T>
         realIndex += widget.itemCount;
       }
 
-      if (widget.axisDirection == AxisDirection.right) {
-        list.insert(0, _buildItem(i, realIndex, animationValue));
-      } else {
-        list.add(_buildItem(i, realIndex, animationValue));
-      }
+      // if (widget.axisDirection == AxisDirection.right) {
+      //   list.insert(0, _buildItem(i, realIndex, animationValue));
+      // } else {
+      //   list.add(_buildItem(i, realIndex, animationValue));
+      // }
+      list.add(_buildItem(i, realIndex, animationValue));
+    }
+
+    if (widget.physics is NeverScrollableScrollPhysics) {
+      return ClipRect(
+        child: Center(
+          child: _buildContainer(list),
+        ),
+      );
     }
 
     return GestureDetector(
@@ -211,7 +220,9 @@ abstract class _CustomLayoutStateBase<T extends _SubSwiper> extends State<T>
     if (_lockScroll) return;
 
     final velocity = widget.scrollDirection == Axis.horizontal
-        ? details.velocity.pixelsPerSecond.dx
+        ? (widget.axisDirection == AxisDirection.right
+            ? -details.velocity.pixelsPerSecond.dx
+            : details.velocity.pixelsPerSecond.dx)
         : details.velocity.pixelsPerSecond.dy;
 
     if (_animationController.value >= 0.75 || velocity > 500.0) {
@@ -233,7 +244,9 @@ abstract class _CustomLayoutStateBase<T extends _SubSwiper> extends State<T>
     if (_lockScroll) return;
     _currentValue = _animationController.value;
     _currentPos = widget.scrollDirection == Axis.horizontal
-        ? details.globalPosition.dx
+        ? (widget.axisDirection == AxisDirection.right
+            ? -details.globalPosition.dx
+            : details.globalPosition.dx)
         : details.globalPosition.dy;
   }
 
@@ -241,7 +254,9 @@ abstract class _CustomLayoutStateBase<T extends _SubSwiper> extends State<T>
     if (_lockScroll) return;
     var value = _currentValue +
         ((widget.scrollDirection == Axis.horizontal
-                    ? details.globalPosition.dx
+                    ? (widget.axisDirection == AxisDirection.right
+                        ? -details.globalPosition.dx
+                        : details.globalPosition.dx)
                     : details.globalPosition.dy) -
                 _currentPos) /
             _swiperWidth /
@@ -401,7 +416,9 @@ class _CustomLayoutSwiper extends _SubSwiper {
     int? index,
     required int itemCount,
     Axis? scrollDirection,
+    AxisDirection? axisDirection,
     required SwiperController controller,
+    ScrollPhysics? physics,
   }) : super(
             loop: loop,
             onIndexChanged: onIndexChanged,
@@ -414,7 +431,9 @@ class _CustomLayoutSwiper extends _SubSwiper {
             index: index,
             itemCount: itemCount,
             controller: controller,
-            scrollDirection: scrollDirection);
+            scrollDirection: scrollDirection,
+            axisDirection: axisDirection,
+            physics: physics);
 
   final CustomLayoutOption option;
 
